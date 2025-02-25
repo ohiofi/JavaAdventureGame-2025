@@ -94,43 +94,7 @@ public class Main {
     Room theStudy = new Room("The Study");
     Room billiardsRm = new Room("The Billiards Room");
     Room theBasement = new Room("The Basement");
-    // descriptions
-    kitchen.setDescription("A dank and dirty room buzzing with flies. Cobwebs hang from the ceiling.");
-    diningHall.setDescription("A large room with ornate golden decorations on each wall. The kitchen is to the west.");
-    ballroom.setDescription("A vast room with a shiny wooden floor. Huge candlesticks guard the entrance.");
-    masterBedroom.setDescription("A large room with a massive bed in the middle of it.");
-    grandFoyer.setDescription(
-        "The entrance to the dark mansion. Designed to astonish guests. The hallway is north and there are large, double-doors to the west.");
-    mainHallway.setDescription("A long dark hall that has creepy paintings on the walls.");
-    theStudy.setDescription(
-        "A small room with a large wooden desk. The walls are covered in book shelves filled with books.");
-    billiardsRm.setDescription(
-        "A small cramped room with a large pool table in the middle. The table is in bad shape with ripped felt.");
-    theBasement.setDescription(
-        "Unlike the rest of the house, the basement is very clean and tidy. There are canned vegetables on a shelf. Has someone been living down here?");
-    // link rooms together. don't forget to link the rooms in both directions.
-    grandFoyer.linkRoom(mainHallway, "north");
-    mainHallway.linkRoom(grandFoyer, "south");
-    grandFoyer.linkRoom(ballroom, "west");
-    ballroom.linkRoom(grandFoyer, "east");
-    ballroom.linkRoom(diningHall, "north");
-    diningHall.linkRoom(ballroom, "south");
-    kitchen.linkRoom(diningHall, "east");
-    diningHall.linkRoom(kitchen, "west");
-    diningHall.linkRoom(billiardsRm, "north");
-    billiardsRm.linkRoom(diningHall, "south");
-    diningHall.linkRoom(mainHallway, "east");
-    mainHallway.linkRoom(diningHall, "west");
-    mainHallway.linkRoom(theBasement, "north");
-    theBasement.linkRoom(mainHallway, "south");
-    mainHallway.linkRoom(theStudy, "east");
-    theStudy.linkRoom(mainHallway, "west");
-    theStudy.linkRoom(masterBedroom, "north");
-    masterBedroom.linkRoom(theStudy, "south");
-    billiardsRm.linkRoom(theBasement, "east");
-    theBasement.linkRoom(billiardsRm, "west");
-    theBasement.linkRoom(masterBedroom, "east");
-    masterBedroom.linkRoom(theBasement, "west");
+    setupRooms(kitchen, diningHall, ballroom, masterBedroom, grandFoyer, mainHallway, theStudy, billiardsRm, theBasement);
     // create characters
     // Ava
     Enemy ava = new Enemy("Ava", "a beautiful chicken");
@@ -186,9 +150,7 @@ public class Main {
     } else {
       theBasement.setItem(wand);
     }
-    // player variables
-    Player player = new Player();
-    player.setCurrentRoom(grandFoyer);
+    Player player = setupPlayer(mainHallway);
     // the game loop
     while (true) {
       typewriter(50, "\n- - -\n");
@@ -217,7 +179,9 @@ public class Main {
       if (command.equals("north") || command.equals("south") || command.equals("east") || command.equals("west")) {
         player.setCurrentRoom(player.getCurrentRoom().getLocationTo(command));
       } else if (command.equals("take")) {
-        player.setBackpack(takeItem(player));
+        //player.setBackpack(takeItem(player));
+        takeItem(player);
+        //System.out.println(player.getBackpack());
       } else if (command.equals("talk")) {
         if (roomNpc != null) {
           typewriter(50, roomNpc.getName() + ": \"" + roomNpc.getSpeech() + "\"\n");
@@ -238,6 +202,7 @@ public class Main {
                 + (player.getCurrentRoom().getCharacter() == null ? "" : "talk, fight, ") + "or quit.\n");
       }
       if (player.getBackpack() != null && player.getBackpack().isBroken()) {
+        System.out.println("oh no your item is broken");
         player.setBackpack(null);
       }
       if (isGameWon == true) {
@@ -254,7 +219,7 @@ public class Main {
    * Pick up an item from the current room and put it in the player.getBackpack().
    * If something is in the player.getBackpack(), drop it in the room.
    */
-  public static Item takeItem(Player player) {
+  public static void takeItem(Player player) {
     if (player.getBackpack() != null) {
       Item temp = player.getBackpack();
       player.setBackpack(player.getCurrentRoom().getItem());
@@ -266,7 +231,7 @@ public class Main {
       player.getCurrentRoom().setItem(null);
       typewriter(50, "You pick up " + player.getBackpack() + ".\n");
     }
-    return player.getBackpack();
+    //return player.getBackpack();
   }
 
   /*
@@ -284,6 +249,7 @@ public class Main {
     }
     Enemy e = (Enemy) currentNpc;
     while (player.getHealth() > 0) {
+      //System.out.println(player.getBackpack());
       System.out.print("FIGHT!!! p = punch, k = kick, r = run"
           + (player.getBackpack() == null ? "" : ", x = use " + player.getBackpack().getName()) + ": ");
       String command = input.next();
@@ -365,6 +331,56 @@ public class Main {
     }
     typewriter(50, e.getName() + " -" + attack + " HP\n");
     e.loseHealth(attack);
+  }
+
+  //kitchen, diningHall, ballroom, masterBedroom, grandFoyer, mainHallway, theStudy, billiardsRm, theBasement
+  public static void setupRooms(Room kitchen, Room diningHall, Room ballroom, Room masterBedroom, Room grandFoyer, Room mainHallway, Room theStudy, Room billiardsRm, Room theBasement){
+    
+    // descriptions
+    kitchen.setDescription("A dank and dirty room buzzing with flies. Cobwebs hang from the ceiling.");
+    diningHall.setDescription("A large room with ornate golden decorations on each wall. The kitchen is to the west.");
+    ballroom.setDescription("A vast room with a shiny wooden floor. Huge candlesticks guard the entrance.");
+    masterBedroom.setDescription("A large room with a massive bed in the middle of it.");
+    grandFoyer.setDescription(
+        "The entrance to the dark mansion. Designed to astonish guests. The hallway is north and there are large, double-doors to the west.");
+    mainHallway.setDescription("A long dark hall that has creepy paintings on the walls.");
+    theStudy.setDescription(
+        "A small room with a large wooden desk. The walls are covered in book shelves filled with books.");
+    billiardsRm.setDescription(
+        "A small cramped room with a large pool table in the middle. The table is in bad shape with ripped felt.");
+    theBasement.setDescription(
+        "Unlike the rest of the house, the basement is very clean and tidy. There are canned vegetables on a shelf. Has someone been living down here?");
+    // link rooms together. don't forget to link the rooms in both directions.
+    grandFoyer.linkRoom(mainHallway, "north");
+    mainHallway.linkRoom(grandFoyer, "south");
+    grandFoyer.linkRoom(ballroom, "west");
+    ballroom.linkRoom(grandFoyer, "east");
+    ballroom.linkRoom(diningHall, "north");
+    diningHall.linkRoom(ballroom, "south");
+    kitchen.linkRoom(diningHall, "east");
+    diningHall.linkRoom(kitchen, "west");
+    diningHall.linkRoom(billiardsRm, "north");
+    billiardsRm.linkRoom(diningHall, "south");
+    diningHall.linkRoom(mainHallway, "east");
+    mainHallway.linkRoom(diningHall, "west");
+    mainHallway.linkRoom(theBasement, "north");
+    theBasement.linkRoom(mainHallway, "south");
+    mainHallway.linkRoom(theStudy, "east");
+    theStudy.linkRoom(mainHallway, "west");
+    theStudy.linkRoom(masterBedroom, "north");
+    masterBedroom.linkRoom(theStudy, "south");
+    billiardsRm.linkRoom(theBasement, "east");
+    theBasement.linkRoom(billiardsRm, "west");
+    theBasement.linkRoom(masterBedroom, "east");
+    masterBedroom.linkRoom(theBasement, "west");
+  }
+
+
+  public static Player setupPlayer(Room startingRoom){
+    // player variables
+    Player player = new Player();
+    player.setCurrentRoom(startingRoom);
+    return player;
   }
 
   public static void typewriter(int delay, String s) {
