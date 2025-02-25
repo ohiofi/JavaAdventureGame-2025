@@ -30,6 +30,7 @@ Item (10 tasks)
     magicType = (int)(Math.random() * 3) + 1;
     name = "nuclear bomb";
     description = "insert incredibly cool description here";
+    strength = 100;
   }
 
 
@@ -39,6 +40,7 @@ Item (10 tasks)
     magicType = (int)(Math.random() * 3) + 1;
     name = _name;
     description = _description;
+    strength = 100;
   }
 
 
